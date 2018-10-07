@@ -2,7 +2,7 @@ Babel 的三个主要处理步骤分别是： 解析（parse），转换（trans
 
 ## 解析
 
-解析步骤接收代码并输出 AST。 这个步骤分为两个阶段：词法分析（Lexical Analysis） 和 语法分析（Syntactic Analysis）。.
+解析步骤接收代码并输出 AST。 这个步骤分为两个阶段：词法分析（Lexical Analysis） 和 语法分析（Syntactic Analysis）。
 
 ### 词法分析
 
@@ -43,27 +43,142 @@ Babel 的三个主要处理步骤分别是： 解析（parse），转换（trans
 
 和 AST 节点一样它们也有 start，end，loc 属性。.
 
+#### <span data-type="color" style="color:#262626">@babel/parser(</span>babylon)
+
+<span data-type="color" style="color:#262626">@babel/parser </span>是 Babel 的词法分析解析器。最初是 Acorn 的一份 fork，它非常快，易于使用，并且针对非标准特性（以及那些未来的标准特性）设计了一个基于插件的架构。
+
+首先，让我们先安装它。
+
+```bash
+$ npm install --save @babel/parser
+```
+
+让我们从解析简单的字符形式代码开始：
+
+```javascript
+const babelParser = require('@babel/parser')
+
+const code = `function square(n) {
+  return n * n;
+}`
+
+console.log(babelParser.parse(code))
+```
+
+输出如下
+
+```javascript
+Node {
+  type: "File",
+  start: 0,
+  end: 38,
+  loc: SourceLocation {...},
+  program: Node {...},
+  comments: [],
+  tokens: [...]
+}
+```
+
+我们还能传递选项给 parse()：
+
+```javascript
+babelParser.parse(code, {
+  sourceType: "module", // default: "script"
+  plugins: ["jsx"] // default: []
+})
+```
+
+sourceType 可以是 "module" 或者 "script"，它表示 Babylon 应该用哪种模式来解析。 "module" 将会在严格模式下解析并且允许模块定义，"script" 则不会。
+
+*注意： sourceType 的默认值是 "script" 并且在发现 import 或 export 时产生错误。 使用 scourceType: "module" 来避免这些错误。*
+
+因为 Babylon 使用了基于插件的架构，因此 plugins 选项可以开启内置插件。 注意 Babylon 尚未对外部插件开放此 API 接口，不过未来会开放的。
+
 ### 语法分析
 
 语法分析阶段会把一个令牌流转换成 AST 的形式。 这个阶段会使用令牌中的信息把它们转换成一个 AST 的表述结构，这样更易于后续的操作。
+
+#### <span data-type="color" style="color:#262626">@babel/parser(</span>babylon,支持较差)
+
+```javascript
+const babelParser = require('@babel/parser')
+
+const code = `function square(n) {
+  return n * n;
+}`
+
+babelParser.parseExpression(code)
+```
+
+#### esprima
+
+```javascript
+var fs = require('fs')
+var esprima = require('esprima');
+const code = `function square(n) {
+  return n * n
+}`
+var ast = esprima.parse(code)
+console.log(JSON.stringify(ast))
+```
+
+输出如下
+
+```json
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "FunctionDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "square"
+      },
+      "params": [
+        {
+          "type": "Identifier",          
+          "name": "n"
+        }
+      ],
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ReturnStatement",
+            "argument": {
+              "type": "BinaryExpression",
+              "operator": "*",
+              "left": {
+                "type": "Identifier",
+                "name": "n"
+              },
+              "right": {
+                "type": "Identifier",
+                "name": "n"
+              }
+            }
+          }
+        ]
+      },
+      "generator": false,
+      "expression": false
+    }
+  ],
+  "sourceType": "script"
+}
+```
 
 ## 转换
 
 转换步骤接收 AST 并对其进行遍历，在此过程中对节点进行添加、更新及移除等操作。 这是 Babel 或是其他编译器中最复杂的过程 同时也是插件将要介入工作的部分，这将是本手册的主要内容， 因此让我们慢慢来。
 
-## 生成
-
-代码生成步骤把最终（经过一系列转换之后）的 AST转换成字符串形式的代码，同时创建源码映射（source maps）。.
-
-代码生成其实很简单：深度优先遍历整个 AST，然后构建可以表示转换后代码的字符串。
-
-### 遍历
+### traverse（遍历)
 
 想要转换 AST 你需要进行递归的树形遍历。
 
 比方说我们有一个 FunctionDeclaration 类型。它有几个属性：id，params，和 body，每一个都有一些内嵌节点。
 
-```
+```javascript
 {
   type: "FunctionDeclaration",
   id: {
@@ -97,11 +212,11 @@ Babel 的三个主要处理步骤分别是： 解析（parse），转换（trans
 
 于是我们从 FunctionDeclaration 开始并且我们知道它的内部属性（即：id，params，body），所以我们依次访问每一个属性及它们的子节点。
 
-接着我们来到 id，它是一个 Identifier。Identifier 没有任何子节点属性，所以我们继续。
+接着我们来到 id，它是一个 Identifier。包含了函数名定义。
 
-之后是 params，由于它是一个数组节点所以我们访问其中的每一个，它们都是 Identifier 类型的单一节点，然后我们继续。
+之后是 params，由于它是一个数组节点所以我们访问其中的每一个，它们都是 Identifier 类型的单一节点。
 
-此时我们来到了 body，这是一个 BlockStatement 并且也有一个 body节点，而且也是一个数组节点，我们继续访问其中的每一个。
+之后是 body，这是一个 BlockStatement 并且也有一个 body节点，而且也是一个数组节点，我们继续访问其中的每一个。
 
 这里唯一的一个属性是 ReturnStatement 节点，它有一个 argument，我们访问 argument 就找到了 BinaryExpression。.
 
@@ -109,35 +224,75 @@ BinaryExpression 有一个 operator，一个 left，和一个 right。 Operator 
 
 Babel 的转换步骤全都是这样的遍历过程。
 
-### Visitors（访问者）
+#### babel-traverse
 
-当我们谈及“进入”一个节点，实际上是说我们在访问它们， 之所以使用这样的术语是因为有一个访问者模式（visitor）的概念。.
+babel-tranverse（遍历）模块维护了整棵树的状态，并且负责替换、移除和添加节点。
+
+运行以下命令安装：
+
+```bash
+$ npm install --save babel-traverse
+```
+
+我们可以配合 Babylon 一起使用来遍历和更新节点：
+
+```javascript
+import * as babylon from "babylon"
+import traverse from "babel-traverse"
+
+const code = `function square(n) {
+  return n * n;
+}`;
+
+const ast = babylon.parse(code);
+
+traverse(ast, {
+  enter(path) {
+    if (
+      path.node.type === "Identifier" &&
+      path.node.name === "n"
+    ) {
+      path.node.name = "x";
+    }
+  }
+});
+```
+
+输出如下
+
+```javascript
+function square(x) {
+  return x * x
+}
+```
+
+### Identifier（标识符）
+
+当我们谈及“进入”一个节点，实际上是说我们在访问它们， 之所以使用这样的术语是因为有一个访问者模式的概念。
 
 访问者是一个用于 AST 遍历的跨语言的模式。 简单的说它们就是一个对象，定义了用于在一个树状结构中获取具体节点的方法。 这么说有些抽象所以让我们来看一个例子。
 
-```
+```javascript
 const MyVisitor = {
   Identifier() {
-    console.log("Called!");
+    console.log("Called!")
   }
-};
+}
 ```
 
-```
 注意： Identifier() { ... } 是 Identifier: { enter() { ... } } 的简写形式。.
-```
 
 这是一个简单的访问者，把它用于遍历中时，每当在树中遇见一个 Identifier 的时候会调用 Identifier() 方法。
 
 所以在下面的代码中 Identifier() 方法会被调用四次（包括 square 在内，总共有四个 Identifier）。).
 
-```
+```javascript
 function square(n) {
-  return n * n;
+  return n * n
 }
 ```
 
-```
+```javascript
 Called!
 Called!
 Called!
@@ -148,7 +303,7 @@ Called!
 
 假设我们有一个树状结构：
 
-```
+```bash
 - FunctionDeclaration
   - Identifier (id)
   - Identifier (params[0])
@@ -190,49 +345,28 @@ Called!
 const MyVisitor = {
   Identifier: {
     enter() {
-      console.log("Entered!");
+      console.log("Entered!")
     },
     exit() {
-      console.log("Exited!");
+      console.log("Exited!")
     }
   }
 };
 ```
+
+值得注意的是，变量的定义也属于标识符：
+
+```javascript
+var win = window
+```
+
+这样会遍历两次标识符。一个是win，一个是window。
 
 ### Paths（路径）
 
 AST 通常会有许多节点，那么节点直接如何相互关联？ 我们可以用一个巨大的可变对象让你来操作以及完全访问（节点的关系），或者我们可以用Paths（路径）来简化这件事情。.
 
 Path 是一个对象，它表示两个节点之间的连接。
-
-举例来说如果我们有以下的节点和它的子节点：
-
-```json
-{
-  type: "FunctionDeclaration",
-  id: {
-    type: "Identifier",
-    name: "square"
-  },
-  ...
-}
-```
-
-将子节点 Identifier 表示为路径的话，看起来是这样的：
-
-```json
-{
-  "parent": {
-    "type": "FunctionDeclaration",
-    "id": {...},
-    ....
-  },
-  "node": {
-    "type": "Identifier",
-    "name": "square"
-  }
-}
-```
 
 同时它还有关于该路径的附加元数据：
 
@@ -262,15 +396,33 @@ Path 是一个对象，它表示两个节点之间的连接。
 }
 ```
 
-当然还有成堆的方法，它们和添加、更新、移动和删除节点有关，不过我们后面再说。
+刚才的例子中，square的path数据结构如下：
 
-可以这么说，路径是对于节点在数中的位置以及其他各种信息的响应式表述。 当你调用一个方法更改了树的时候，这些信息也会更新。 Babel 帮你管理着这一切从而让你能更轻松的操作节点并且尽量保证无状态化。（译注：意即尽可能少的让你来维护状态）
+* type: 节点类型
+* node：当前节点
+    * name: square
+* parent: ast的外层节点
+    * type: FunctionDeclaration
+    * id: 外层标识符
+        * name: 函数名(square)
+* parentNode: ast的外层节点path
+* scope: 当前作用域
+    * bindings: 当前作用域内私有变量
+    * block：当前作用域函数信息
+        * id：当前作用域函数标识符
+            * name: 作用域函数名(square)
+    * parent: 外层作用域
+        * block: 外层作用域函数信息
+            * type: Program
+    * parentBlock：外层作用域Block
+    
+还有很多别的属性和成堆的方法，它们和添加、更新、移动和删除节点有关，稍后讲解。
 
-### Paths in Visitors（存在于访问者中的路径）
+### Paths in Identifier（存在于访问者中的路径）
 
 当你有一个拥有 Identifier() 方法的访问者时，你实际上是在访问路径而不是节点。 如此一来你可以操作节点的响应式表述（译注：即路径）而不是节点本身。
 
-```
+```javascript
 const MyVisitor = {
   Identifier(path) {
     console.log("Visiting: " + path.node.name);
@@ -278,20 +430,22 @@ const MyVisitor = {
 };
 ```
 
-```
+```javascript
 a + b + c;
+```
+
+输出如下
+
+```javascript
 Visiting: a
 Visiting: b
 Visiting: c
 ```
 
-State（状态）
+##### State（状态）
+由于所有的操作都可能与Identifier重叠，我们很可能会操作一个值两次。也就是说，如果每个访问者是有副作用的函数，那么很可能造成意想不到的结果。
 
-状态是 AST 转换的敌人。状态会不停的找你麻烦，你对状态的预估到最后几乎总是错的，因为你无法预先考虑到所有的语法。
-
-考虑下列代码：
-
-```
+```javascript
 function square(n) {
   return n * n;
 }
@@ -300,13 +454,12 @@ function square(n) {
 让我们写一个把 n 重命名为 x 的访问者的快速实现：.
 
 ```javascript
-let paramName;
-
+let paramName = 'n';
 const MyVisitor = {
   FunctionDeclaration(path) {
     const param = path.node.params[0];
-    paramName = param.name;
     param.name = "x";
+    paramName = param.name;
   },
 
   Identifier(path) {
@@ -315,18 +468,22 @@ const MyVisitor = {
     }
   }
 };
+
+traverse(ast, MyVisitor);
+
+const { code: c } = babel.transformFromAst(ast);
+console.log(c)
 ```
 
-对上面的代码来说或许能行，但我们很容易就能“搞坏”它：
+输出如下
 
 ```javascript
-function square(n) {
+function square(x) {
   return n * n;
 }
-n;
 ```
 
-更好的处理方式是递归。那么让我们来像克里斯托佛·诺兰的电影那样来把一个访问者放进另外一个访问者里面。
+更好的处理方式是递归。像克里斯托佛·诺兰的电影那样来把一个访问者放进另外一个访问者里面。
 
 ```javascript
 const updateParamNameVisitor = {
@@ -348,15 +505,14 @@ const MyVisitor = {
 };
 ```
 
-当然，这只是一个刻意捏造的例子，不过它演示了如何从访问者中消除全局状态。
+这只是一个刻意捏造的例子，不过它演示了如何从访问者中消除全局状态。
 
 ### Scopes（作用域）
 
-接下来让我们引入作用域（scope）的概念。 JavaScript 拥有词法作用域，代码块创建新的作用域并形成一个树状结构。
+作用域在路径一节已经讲解了。 JavaScript 拥有词法作用域，代码块创建新的作用域并形成一个树状结构。
 
 ```javascript
 // global scope
-
 function scopeOne() {
   // scope 1
 
@@ -475,96 +631,212 @@ function scopeOne() {
 }
 ```
 
-## API
+### A<span data-type="color" style="color:rgb(49, 49, 49)"><span data-type="background" style="background-color:rgb(255, 255, 255)">ddressing（寻址）</span></span>
+我们用作用域来看一下，如何设置函数的作用域地址和解析变量的作用域地址。
 
-Babel 实际上是一系列的模块。本节我们将探索一些主要的模块，解释它们是做什么的以及如何使用它们。
-
-注意：本节内容不是详细的 API 文档的替代品，正式的 API 文档将很快提供出来。
-
-
-### babylon
-
-Babylon 是 Babel 的解析器。最初是 Acorn 的一份 fork，它非常快，易于使用，并且针对非标准特性（以及那些未来的标准特性）设计了一个基于插件的架构。
-
-首先，让我们先安装它。
-
-```bash
-$ npm install --save babylon
-```
-
-让我们从解析简单的字符形式代码开始：
+随意输入一段用户逻辑代码
 
 ```javascript
-import * as babylon from "babylon";
+  const a = 1; 
+  const fun = function () {
+    const f = 'xx'
+    // 这里的f找不到fun名字，无法分析
+    console.log(f)
+  }
 
-const code = `function square(n) {
-  return n * n;
-}`;
+  const funx = () => {
+    const k = 'xx'
+    // 这里的f找不到fun名字，无法分析
+    console.log(k)
+  }
 
-babylon.parse(code);
-// Node {
-//   type: "File",
-//   start: 0,
-//   end: 38,
-//   loc: SourceLocation {...},
-//   program: Node {...},
-//   comments: [],
-//   tokens: [...]
-// }
+  function fun1() {
+    var x = b //取值居然是
+    alert(y ? 1: 2)
+    var b = 2
+    function fun2() {
+      var c = 3
+      alert(xxx ? 1 : 2)
+      function fun3() {
+        const d = b + c   
+        console.log(d)
+        fun2(n)   
+      }
+    }
+  };
 ```
 
-我们还能传递选项给 parse()：
+我们希望fun,funx,fun1,fun2,fun3都能够设置作用域地址。在调用变量f,k,y,alert,xxx,console.log,d,fun2,n时，能分析出作用域地址，如下：
+
+```plain
+// 设置作用域地址
+fun,funx,fun1: global
+fun2: global_fun1
+fun3: global_fun1_fun2
+
+// 查找作用域地址
+f: global_fun
+k: global_funx
+y: global_fun1
+alert,xxx: global_fun1_fun2
+console.log,d,fun2,n: global_fun1_fun2_fun3
+```
+
+#### 分析
+在访问函数与标识符时，我们需要根据 scope递归解析路径，一直向上查找外层作用域。
+
+定义函数一共有三种类型：分别是：
+* <span data-type="color" style="color:#262626">FunctionDeclaration: 函数定义(function x = ())</span>
+* <span data-type="color" style="color:#262626">FunctionExpression：函数表达式(const x = function() {})</span>
+* <span data-type="color" style="color:#262626">ArrowFunctionExpression：箭头函数(const x = () =&gt; {})</span>
+
+在 visitor时候，统一传递path.scope即可。
 
 ```javascript
-babylon.parse(code, {
-  sourceType: "module", // default: "script"
-  plugins: ["jsx"] // default: []
-});
+FunctionDeclaration(path) {
+    const execEnv = analysisExecEnv(path.scope, path).join(SEP)
+}
 ```
 
-sourceType 可以是 "module" 或者 "script"，它表示 Babylon 应该用哪种模式来解析。 "module" 将会在严格模式下解析并且允许模块定义，"script" 则不会。
-
-注意： sourceType 的默认值是 "script" 并且在发现 import 或 export 时产生错误。 使用 scourceType: "module" 来避免这些错误。
-
-因为 Babylon 使用了基于插件的架构，因此 plugins 选项可以开启内置插件。 注意 Babylon 尚未对外部插件开放此 API 接口，不过未来会开放的。
-
-可以在 Babylon README 查看所有插件的列表。.
-
-### babel-traverse
-
-Babel Tranverse（遍历）模块维护了整棵树的状态，并且负责替换、移除和添加节点。
-
-运行以下命令安装：
-
-```bash
-$ npm install --save babel-traverse
-```
-
-我们可以配合 Babylon 一起使用来遍历和更新节点：
+递归向上查找scope.parent，把每一层的标识符记录下来
 
 ```javascript
-import * as babylon from "babylon";
-import traverse from "babel-traverse";
-
-const code = `function square(n) {
-  return n * n;
-}`;
-
-const ast = babylon.parse(code);
-
-traverse(ast, {
-  enter(path) {
-    if (
-      path.node.type === "Identifier" &&
-      path.node.name === "n"
-    ) {
-      path.node.name = "x";
+const analysisExecEnv = (scope, path) => {
+  const paths = []
+  if (!scope || !scope.block) {
+    return []
+  } else if (scope.block.type === NODE_TYPES.PROGRAM) {
+    return [GLOBAL]
+  } else if (scope.block.type === NODE_TYPES.FUNCTION_DECLARATION) {
+    paths.push(scope.block.id.name)
+  } else if (scope.block.type === NODE_TYPES.FUNCTION_EXPRESSION) {
+    // 函数定义
+    if (path.parent.type === NODE_TYPES.VARIABLE_DECLARATOR && path.parent.id) {
+      path.node.id = {
+        name: path.parent.id.name
+      }
+      paths.push(path.parent.id.name)
+    } 
+    // 函数内部变量调用
+    else {
+      paths.push(scope.block.id.name)
     }
   }
-});
+  return analysisExecEnv(scope.parent, path).concat(paths)
+}
 ```
 
-### babel-types
+* 如果没有查找到scope或者block，返回空数组，这步是做异常处理。
+* 如果已经找到最上层，既Program，返回global(如果在浏览器中既window)
+* 如果是函数生命，已进入生命周期
+* 无论函数表达式还是箭头函数，均为函数表达式。这两种情况下，定义函数查找函数名和函数执行时的作用域查找函数名与函数声明有非常大的区别：
+    * 函数定义(const x = function () {})：
+        函数定义时，数据结构如下：
+        ```javascript
+           {
+              "type": "VariableDeclaration",
+              "start": 18,
+              "end": 51,
+              "declarations": [
+                {
+                  "type": "VariableDeclarator",
+                  "start": 24,
+                  "end": 51,
+                  "id": {
+                    "type": "Identifier",
+                    "start": 24,
+                    "end": 27,
+                    "name": "fun"
+                  },
+                  "init": {
+                    "type": "FunctionExpression",
+                    "start": 30,
+                    "end": 51,
+                    "id": null,
+                    "generator": false,
+                    "expression": false,
+                    "params": [],
+                    "body": {
+                      "type": "BlockStatement",
+                      "start": 42,
+                      "end": 51,
+                      "body": []
+                    }
+                  }
+                }
+              ],
+              "kind": "const"
+            }
+        ```
+        函数在init中声明，也就是说，在函数这一层是拿不到函数名的。我们必须得去上一层查找id.name: __path.parent.id.name。__
+    * 函数内部变量执行(const x = function () { alert(y) }):
+        
+          当y执行时，无论通过scope还是parent，parentPath均无法找到顶层的函数名。scope只有作用域的信息，并没有作用域的外层节点信息，因为scope.parent是外层作用域而不是外层节点，而parent仅保存外层Node，node对象并没有parent，而parentPath一直向上找到key为init，type为FunctionExpression的对象时，就不在有parentPath，找不到任何与函数有关的信息。数据结构如下:
+
+```json
+"init": {
+    "type": "FunctionExpression",
+    "start": 14,
+    "end": 81,
+    "id": null,
+    "generator": false,
+    "expression": false,
+    "params": [],
+    "body": {
+      "type": "BlockStatement",
+      "start": 26,
+      "end": 81,
+      "body": [
+        {
+          "type": "VariableDeclaration",
+          "start": 32,
+          "end": 46,
+          "declarations": [
+            {
+              "type": "VariableDeclarator",
+              "start": 38,
+              "end": 46,
+              "id": {
+                "type": "Identifier",
+                "start": 38,
+                "end": 39,
+                "name": "f"
+              },
+              "init": {
+                "type": "Literal",
+                "start": 42,
+                "end": 46,
+                "value": "xx",
+                "raw": "'xx'"
+              }
+            }
+          ],
+          "kind": "const"
+        },
+        {
+          "type": "ExpressionStatement",
+          "start": 76,
+          "end": 77,
+          "expression": {
+            "type": "Identifier",
+            "start": 76,
+            "end": 77,
+            "name": "f"
+          }
+        }
+      ]
+    }
+  }
+```
+
+不得已，我们在函数定义时候，给函数的标识符强行赋值：
+```javascript
+  path.node.id = {
+    name: path.parent.id.name
+  }
+```
+
+### Types（类型）
 
 Babel Types（类型）模块是一个用于 AST 节点的 Lodash 式工具库。 译注：Lodash 是一个 JavaScript 函数工具库，提供了基于函数式编程风格的众多工具函数）它包含了构造、验证以及变换 AST 节点的方法。 其设计周到的工具方法有助于编写清晰简单的 AST 逻辑。
 
@@ -691,9 +963,17 @@ t.assertBinaryExpression(maybeBinaryExpressionNode, { operator: "*" });
 // Error: Expected type "BinaryExpression" with option { "operator": "*" }
 ```
 
-#### Converters（变换器）
+## 生成
 
-##### babel-generator
+代码生成步骤把最终（经过一系列转换之后）的 AST转换成字符串形式的代码，同时创建源码映射（source maps）。.
+
+代码生成其实很简单：深度优先遍历整个 AST，然后构建可以表示转换后代码的字符串。
+
+Babel 实际上是一系列的模块。本节我们将探索一些主要的模块，解释它们是做什么的以及如何使用它们。
+
+*注意：本节内容不是详细的 API 文档的替代品，正式的 API 文档将很快提供出来。*
+
+### babel-generator
 
 Babel Generator模块是 Babel 的代码生成器。它将 AST 输出为代码并包括源码映射（sourcemaps）。
 
@@ -734,7 +1014,7 @@ generate(ast, {
 }, code);
 ```
 
-##### babel-template
+### babel-template
 
 Babel Template模块是一个很小但却非常有用的模块。它能让你编写带有占位符的字符串形式的代码，你可以用此来替代大量的手工构建的 AST。
 
@@ -756,4 +1036,3 @@ const ast = buildRequire({
 console.log(generate(ast).code);
 // var myModule = require("my-module");
 ```
-
