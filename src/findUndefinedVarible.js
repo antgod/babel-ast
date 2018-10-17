@@ -4,7 +4,7 @@ const traverse = require('@babel/traverse').default
 
 const SEP = '_'
 const GLOBAL = 'global'
-const DEFAULT_WINDOWS = ['window', 'alert', 'document', 'Math', 'location', 'history']
+const DEFAULT_WINDOWS = ['window', 'alert', 'document', 'Math', 'location', 'history', 'typeof']
 
 const NODE_TYPES = {
   PROGRAM: 'Program',
@@ -15,7 +15,12 @@ const NODE_TYPES = {
   CONDITIONAL_EXPRESSION: 'ConditionalExpression',
   TEMPLATE_LITERAL: 'TemplateLiteral',
   BINARY_EXPRESSION: 'BinaryExpression',
-  VARIABLE_DECLARATOR: 'VariableDeclarator'
+  VARIABLE_DECLARATOR: 'VariableDeclarator',
+  ASSIGNMENT_EXPRESSION: 'AssignmentExpression',
+  UNARY_EXPRESSION: 'UnaryExpression',
+  // ARRAY_PATTERN: 'ArrayPattern',
+  ARRAY_EXPRESSION: 'ArrayExpression',
+  OBJECT_PROPERTY: 'ObjectProperty',
 }
 
 const KIND_TYPES = {
@@ -46,7 +51,6 @@ const analysisExecEnv = (scope, path) => {
     } 
     // 函数内部变量调用
     else {
-      debugger
       paths.push(scope.block.id.name)
     }
   }
@@ -54,7 +58,7 @@ const analysisExecEnv = (scope, path) => {
   return res
 }
 
-const analysisHoisting = (binds) => {
+const analysisHoisting = (binds, defaults) => {
   const filterIdentifier = (identifier, columns) => ({ [identifier.name]: pick(identifier, columns)})
   return reduce(binds, (last, bind) => {
     const { kind, identifier } = bind
@@ -64,7 +68,7 @@ const analysisHoisting = (binds) => {
       hoisting: { ...last.hoisting, ...hoisting },
       vars: { ...last.vars, ...vars },
     }
-  }, { hoisting: maps(DEFAULT_WINDOWS), vars: {} })
+  }, { hoisting: maps(defaults), vars: {} })
 }
 
 /*根据作用域叠加依赖
@@ -88,30 +92,38 @@ const accumuleEnvs = (envs) => {
   })
 }
 
-function findUndefinedVarible (tplStr) {
-  const ast = babel.parse(tplStr)
+function findUndefinedVarible (code, {
+  defaults = DEFAULT_WINDOWS,
+} = {}) {
+  const ast = babel.parse(code, {
+    sourceType: "module",
+    plugins: [
+      "jsx",
+      "flow"
+    ]
+  })
   const envs = {}
   traverse(ast, {
     Program(path) {
       const binds = path.scope.bindings
-      const classifyBinds = analysisHoisting(binds)
+      const classifyBinds = analysisHoisting(binds, defaults)
       envs['global'] = classifyBinds
     },
     FunctionDeclaration(path) {
       const binds = path.scope.bindings
-      const classifyBinds = analysisHoisting(binds)
+      const classifyBinds = analysisHoisting(binds, defaults)
       const execEnv = analysisExecEnv(path.scope, path).join(SEP)
       envs[execEnv] = classifyBinds
     },
     FunctionExpression(path) {
       const binds = path.scope.bindings
-      const classifyBinds = analysisHoisting(binds)
+      const classifyBinds = analysisHoisting(binds, defaults)
       const execEnv = analysisExecEnv(path.scope, path).join(SEP)
       envs[execEnv] = classifyBinds
     },
     ArrowFunctionExpression(path) {
       const binds = path.scope.bindings
-      const classifyBinds = analysisHoisting(binds)
+      const classifyBinds = analysisHoisting(binds, defaults)
       const execEnv = analysisExecEnv(path.scope, path).join(SEP)
       envs[execEnv] = classifyBinds
     }
@@ -124,10 +136,12 @@ function findUndefinedVarible (tplStr) {
     Identifier(path) {
       const type = path.parent.type
       const { name, start } = path.node
-      
+      // if (name ==='b') {
+      //   debugger
+      //   console.log('type :', type);
+      // }
       if (path.key === 'init' || values(omit(NODE_TYPES, ['FUNCTION_DECLARATION', 'FUNCTION_EXPRESSION', 'PROGRAM', 'VARIABLE_DECLARATOR'])).includes(type)) {
         const execEnv = analysisExecEnv(path.scope, path).join(SEP)
-        // console.log(execEnv)
         const accumuledEnv = accumuledEnvs[execEnv]
         if (accumuledEnv.hoisting[name]) {
           return
@@ -144,36 +158,12 @@ function findUndefinedVarible (tplStr) {
   return undefinedVars
 }
 
-const code = `
-  const a = 1; 
-  const fun = function () {
-    const f = 'xx'
-    // 这里的f找不到fun名字，无法分析
-    k
-  }
+// const code = `({} = {b})`
 
-  const funx = () => {
-    const k = 'xx'
-    // 这里的f找不到fun名字，无法分析
-    console.log(k)
-  }
+// console.log(findUndefinedVarible(code))
 
-  function fun1() {
-    var x = b //取值居然是
-    alert(y ? 1: 2)
-    var b = 2
-    function fun2() {
-      var c = 3
-      alert(xxx ? 1 : 2)
-      function fun3() {
-        const d = b + c   
-        console.log(d)
-        fun2(n)   
-      }
-    }
-  };
-`
 module.exports = {
-  findUndefinedVarible, 
+  findUndefinedVarible,
+  DEFAULT_WINDOWS, 
 }
-console.log(findUndefinedVarible(code))
+

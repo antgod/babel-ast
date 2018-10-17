@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for findUndefinedVarible.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="prettify.css" />
+    <link rel="stylesheet" href="base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="index.html">All files</a> findUndefinedVarible.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">98.8% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>82/83</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">96.88% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>31/32</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>10/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">98.75% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>79/80</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">133x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">37x</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">37x</span>
+<span class="cline-any cline-yes">37x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { reduce, pick, map, omit, values } = require('ant-util')
+const babel = require('@babel/parser')
+const traverse = require('@babel/traverse').default
+&nbsp;
+const SEP = '_'
+const GLOBAL = 'global'
+const DEFAULT_WINDOWS = ['window', 'alert', 'document', 'Math', 'location', 'history', 'typeof']
+&nbsp;
+const NODE_TYPES = {
+  PROGRAM: 'Program',
+  FUNCTION_DECLARATION: 'FunctionDeclaration',
+  FUNCTION_EXPRESSION: 'FunctionExpression',
+  EXPRESSION_STATEMENT: 'ExpressionStatement',
+  CALL_EXPRESSION: 'CallExpression',
+  CONDITIONAL_EXPRESSION: 'ConditionalExpression',
+  TEMPLATE_LITERAL: 'TemplateLiteral',
+  BINARY_EXPRESSION: 'BinaryExpression',
+  VARIABLE_DECLARATOR: 'VariableDeclarator',
+  ASSIGNMENT_EXPRESSION: 'AssignmentExpression',
+  UNARY_EXPRESSION: 'UnaryExpression',
+  // ARRAY_PATTERN: 'ArrayPattern',
+  ARRAY_EXPRESSION: 'ArrayExpression',
+  OBJECT_PROPERTY: 'ObjectProperty',
+}
+&nbsp;
+const KIND_TYPES = {
+  HOISTED: 'hoisted',
+  LET: 'let',
+  CONST: 'const',
+}
+&nbsp;
+const USEFUL_IDENTIFIER_COLUMNS = ['name', 'start', 'end']
+&nbsp;
+const maps = (array) =&gt; array.reduce((last, item) =&gt; Object.assign(last, {[item]: item}), {})
+&nbsp;
+const analysisExecEnv = (scope, path) =&gt; {
+  const paths = []
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!scope || !scope.block) {
+<span class="cstat-no" title="statement not covered" >    return []</span>
+  } else if (scope.block.type === NODE_TYPES.PROGRAM) {
+    return [GLOBAL]
+  } else if (scope.block.type === NODE_TYPES.FUNCTION_DECLARATION) {
+    paths.push(scope.block.id.name)
+  } else if (scope.block.type === NODE_TYPES.FUNCTION_EXPRESSION) {
+    // 函数定义
+    if (path.parent.type === NODE_TYPES.VARIABLE_DECLARATOR) {
+      path.node.id = {
+        name: path.parent.id.name
+      }
+      paths.push(path.parent.id.name)
+    } 
+    // 函数内部变量调用
+    else {
+      paths.push(scope.block.id.name)
+    }
+  }
+  const res = analysisExecEnv(scope.parent, path).concat(paths)
+  return res
+}
+&nbsp;
+const analysisHoisting = (binds, defaults) =&gt; {
+  const filterIdentifier = (identifier, columns) =&gt; ({ [identifier.name]: pick(identifier, columns)})
+  return reduce(binds, (last, bind) =&gt; {
+    const { kind, identifier } = bind
+    const hoisting = kind === KIND_TYPES.HOISTED ? filterIdentifier(identifier, USEFUL_IDENTIFIER_COLUMNS) : {}
+    const vars = kind !== KIND_TYPES.HOISTED ? filterIdentifier(identifier, USEFUL_IDENTIFIER_COLUMNS) : {}
+    return {
+      hoisting: { ...last.hoisting, ...hoisting },
+      vars: { ...last.vars, ...vars },
+    }
+  }, { hoisting: maps(defaults), vars: {} })
+}
+&nbsp;
+/*根据作用域叠加依赖
+  比如
+  ```
+  const a = 1;
+  function fun1() {
+    const b = 2;
+  }
+  ```
+*/
+const accumuleEnvs = (envs) =&gt; {
+  return map(envs, (_, envPath) =&gt; {
+    return envPath.split(SEP).reduce((last, env) =&gt; {
+      const unitePath = !last.unitePath ? env : `${last.unitePath}${SEP}${env}`
+      last.unitePath = unitePath
+      last.hoisting = Object.assign(last.hoisting, envs[unitePath].hoisting)
+      last.vars = Object.assign(last.vars, envs[unitePath].vars)
+      return last
+    }, { hoisting: {}, vars: {}})
+  })
+}
+&nbsp;
+function findUndefinedVarible (code, {
+  defaults = DEFAULT_WINDOWS,
+} = {}) {
+  const ast = babel.parse(code, {
+    sourceType: "module",
+    plugins: [
+      "jsx",
+      "flow"
+    ]
+  })
+  const envs = {}
+  traverse(ast, {
+    Program(path) {
+      const binds = path.scope.bindings
+      const classifyBinds = analysisHoisting(binds, defaults)
+      envs['global'] = classifyBinds
+    },
+    FunctionDeclaration(path) {
+      const binds = path.scope.bindings
+      const classifyBinds = analysisHoisting(binds, defaults)
+      const execEnv = analysisExecEnv(path.scope, path).join(SEP)
+      envs[execEnv] = classifyBinds
+    },
+    FunctionExpression(path) {
+      const binds = path.scope.bindings
+      const classifyBinds = analysisHoisting(binds, defaults)
+      const execEnv = analysisExecEnv(path.scope, path).join(SEP)
+      envs[execEnv] = classifyBinds
+    },
+    ArrowFunctionExpression(path) {
+      const binds = path.scope.bindings
+      const classifyBinds = analysisHoisting(binds, defaults)
+      const execEnv = analysisExecEnv(path.scope, path).join(SEP)
+      envs[execEnv] = classifyBinds
+    }
+  })
+&nbsp;
+  const accumuledEnvs = accumuleEnvs(envs)
+&nbsp;
+  const undefinedVars = [] 
+  traverse(ast, {
+    Identifier(path) {
+      const type = path.parent.type
+      const { name, start } = path.node
+      if (name ==='b') {
+        debugger
+        console.log('type :', type);
+      }
+      if (path.key === 'init' || values(omit(NODE_TYPES, ['FUNCTION_DECLARATION', 'FUNCTION_EXPRESSION', 'PROGRAM', 'VARIABLE_DECLARATOR'])).includes(type)) {
+        const execEnv = analysisExecEnv(path.scope, path).join(SEP)
+        const accumuledEnv = accumuledEnvs[execEnv]
+        if (accumuledEnv.hoisting[name]) {
+          return
+        } else if (accumuledEnv.vars[name]) {
+          const { end } = accumuledEnv.vars[name]
+          if (start &gt; end ) {
+            return 
+          }
+        }
+        undefinedVars.push(name)
+      }
+    }
+  })
+  return undefinedVars
+}
+&nbsp;
+const code = `({} = {b})`
+&nbsp;
+console.log(findUndefinedVarible(code))
+&nbsp;
+&nbsp;
+module.exports = {
+  findUndefinedVarible,
+  DEFAULT_WINDOWS, 
+}
+&nbsp;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Oct 17 2018 09:41:15 GMT+0800 (CST)
+</div>
+</div>
+<script src="prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="sorter.js"></script>
+</body>
+</html>

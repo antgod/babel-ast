@@ -3,6 +3,7 @@ const code = `function square(n) {
   return n * n
 }`;
 
+var a = 1
 const astParse = babelParser.parse(code, {
 //  plugins: [
 //    // enable jsx and flow syntaxconst { Button } = require(a)
