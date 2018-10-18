@@ -4,7 +4,16 @@ const traverse = require('@babel/traverse').default
 
 const SEP = '_'
 const GLOBAL = 'global'
-const DEFAULT_WINDOWS = ['window', 'alert', 'document', 'Math', 'location', 'history', 'typeof']
+const DEFAULT_PLUGINS = ['objectRestSpread']
+const DEFAULT_SOURCE_TYPE = 'module'
+const DEFAULT_BROWER = ['window', 'alert', 'document', 'Math', 'location', 'history', 'console', 
+  'URLSearchParams', 'Intl', 'IntersectionObserver', 'Credential', 'requestIdleCallback', 'customElements', 'PromiseRejectionEvent',
+  'Object', 'Function', 'String', 'Number', 'Array',
+  'typeof', 'isNaN', 
+  'toString', 'hasOwnProperty','eval'
+]
+const DEFAULT_NODE = ['require', 'module', 'exports']
+
 
 const NODE_TYPES = {
   PROGRAM: 'Program',
@@ -17,10 +26,14 @@ const NODE_TYPES = {
   BINARY_EXPRESSION: 'BinaryExpression',
   VARIABLE_DECLARATOR: 'VariableDeclarator',
   ASSIGNMENT_EXPRESSION: 'AssignmentExpression',
-  UNARY_EXPRESSION: 'UnaryExpression',
-  // ARRAY_PATTERN: 'ArrayPattern',
-  ARRAY_EXPRESSION: 'ArrayExpression',
-  OBJECT_PROPERTY: 'ObjectProperty',
+  MEMBER_EXPRESSION: 'MemberExpression',
+  SPREAD_ELEMENT: 'SpreadElement',
+  ARRAY_EXPRESSION: 'ArrayExpression',        // [a]
+  OBJECT_PROPERTY: 'ObjectProperty',          // { a }
+  NEW_EXPRESSION: 'NewExpression',            // new
+  RETURN_STATEMENT: 'ReturnStatement',        // return xxx
+  // UNARY_EXPRESSION: 'UnaryExpression',     // typeof
+  // ARRAY_PATTERN: 'ArrayPattern',           // var [a]
 }
 
 const KIND_TYPES = {
@@ -93,14 +106,13 @@ const accumuleEnvs = (envs) => {
 }
 
 function findUndefinedVarible (code, {
-  defaults = DEFAULT_WINDOWS,
+  defaults = DEFAULT_BROWER,
+  sourceType = DEFAULT_SOURCE_TYPE,
+  plugins = DEFAULT_PLUGINS,
 } = {}) {
   const ast = babel.parse(code, {
-    sourceType: "module",
-    plugins: [
-      "jsx",
-      "flow"
-    ]
+    sourceType,
+    plugins,
   })
   const envs = {}
   traverse(ast, {
@@ -136,11 +148,26 @@ function findUndefinedVarible (code, {
     Identifier(path) {
       const type = path.parent.type
       const { name, start } = path.node
-      // if (name ==='b') {
-      //   debugger
-      //   console.log('type :', type);
+      // if (name ==='consolex') {
+      //  console.log('type :', type, 'key', path.key , type);
       // }
-      if (path.key === 'init' || values(omit(NODE_TYPES, ['FUNCTION_DECLARATION', 'FUNCTION_EXPRESSION', 'PROGRAM', 'VARIABLE_DECLARATOR'])).includes(type)) {
+      const excludes = ['FUNCTION_DECLARATION', 'FUNCTION_EXPRESSION', 'PROGRAM', 'VARIABLE_DECLARATOR', 'OBJECT_PROPERTY', 'MEMBER_EXPRESSION']
+      const commonFilter = values(omit(NODE_TYPES, excludes)).includes(type)
+
+      let specFilter = false
+      if ([NODE_TYPES.VARIABLE_DECLARATOR, NODE_TYPES.OBJECT_PROPERTY, NODE_TYPES.MEMBER_EXPRESSION].includes(type)) {
+        if (
+          // a = b;检测b
+          type === NODE_TYPES.VARIABLE_DECLARATOR && path.key === 'init' || 
+          // var {c: e} = {a: b}; 检测b
+          type === NODE_TYPES.OBJECT_PROPERTY && path.key === 'value' && path.parentPath.parent.type === 'ObjectExpression' ||
+          // var 
+          type === NODE_TYPES.MEMBER_EXPRESSION && path.key === 'object') {
+            specFilter = true
+        }
+      }
+
+      if (commonFilter || specFilter) {
         const execEnv = analysisExecEnv(path.scope, path).join(SEP)
         const accumuledEnv = accumuledEnvs[execEnv]
         if (accumuledEnv.hoisting[name]) {
@@ -158,12 +185,20 @@ function findUndefinedVarible (code, {
   return undefinedVars
 }
 
-// const code = `({} = {b})`
+// const code = `function foo() {var {c:e} = {a: 1}; var [a, b=4] = [1, 2]; return {a, b, c: d}; }`
+// const code = `var {c:e} = {a: b}; `
+// const code = 'var a = b'
 
+// const code = 'function myFunc(...foo) {  return foo;}'
+// const code = `var console; [1,2,3].forEach(obj => { 
+//   consolex.log(obj1);
+// });`
+// const code = 'var {bacon, ...others} = stuff; foo(...others, ...others1); var c = {...other2};'
 // console.log(findUndefinedVarible(code))
 
 module.exports = {
   findUndefinedVarible,
-  DEFAULT_WINDOWS, 
+  DEFAULT_BROWER,
+  DEFAULT_NODE,
 }
 
