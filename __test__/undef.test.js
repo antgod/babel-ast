@@ -1,141 +1,141 @@
-const { findUndefinedVarible, DEFAULT_NODE } = require('../src/findUndefinedVarible')
+const { undef, DEFAULT_NODE } = require('../src/undef')
 
 let code
 
 test('直接调用', () => {
   // no - pass
   code = `var a = 1, b = 2; a;`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `a = 1;`
-  expect(findUndefinedVarible(code)).toEqual(['a'])
+  expect(undef(code)).toEqual(['a'])
 
   code = `var a = b;`
-  expect(findUndefinedVarible(code)).toEqual(['b'])
+  expect(undef(code)).toEqual(['b'])
 
   code = `window;`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `require('a');`
 
-  expect(findUndefinedVarible(code)).toEqual(['require'])
+  expect(undef(code)).toEqual(['require'])
 
   code = `[a] = [b]`
-  expect(findUndefinedVarible(code)).toEqual(['b'])
+  expect(undef(code)).toEqual(['b'])
 
   code = `({a} = {b})`
-  expect(findUndefinedVarible(code)).toEqual(['b'])
+  expect(undef(code)).toEqual(['b'])
 
   code = `({a = c} = {b})`
-  expect(findUndefinedVarible(code)).toEqual(['b'])
+  expect(undef(code)).toEqual(['b'])
 
   code = `[obj.a] = [0, 1]`
-  expect(findUndefinedVarible(code)).toEqual(['obj'])
+  expect(undef(code)).toEqual(['obj'])
 
   code = `const c = 0; const a = {...b, c}`
-  expect(findUndefinedVarible(code)).toEqual(['b'])
+  expect(undef(code)).toEqual(['b'])
 
   code = `[a] = [b]`
-  expect(findUndefinedVarible(code)).toEqual(['b'])
+  expect(undef(code)).toEqual(['b'])
 
   // pass
   code = `var a = 1, b = 2; a;`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `function f() { b; }`
-  expect(findUndefinedVarible(code, { defaults: ['b']})).toEqual([])
+  expect(undef(code, { defaults: ['b']})).toEqual([])
 
   code = `function a(){}  a();`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `function f(b) { b; }`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `b++;`
-  expect(findUndefinedVarible(code, { defaults: ['b']})).toEqual([])
+  expect(undef(code, { defaults: ['b']})).toEqual([])
 
   code = `window`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `require('a')`
-  expect(findUndefinedVarible(code, { defaults: DEFAULT_NODE })).toEqual([])
+  expect(undef(code, { defaults: DEFAULT_NODE })).toEqual([])
 
   code = `Object; isNaN();`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `toString; hasOwnProperty;`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `function evilEval(stuffToEval) { var ultimateAnswer; ultimateAnswer = 42; eval(stuffToEval); }`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `typeof a`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `typeof (a)`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `var b = typeof a`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `typeof a === 'undefined'`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `Array = 1`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `var toString = 1;`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `var {bacon, ...others} = stuff; console.log(others)`
-  expect(findUndefinedVarible(code)).toEqual(['stuff'])
+  expect(undef(code)).toEqual(['stuff'])
 
   code = `var a; [a] = [0];`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `var a; ({a} = {});`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `var a; ({b: a} = {});`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `var obj; [obj.a, obj.b] = [0, 1];`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `import Warning from '../lib/warning'; var warn = new Warning('text');`
-  expect(findUndefinedVarible(code, { defaults: DEFAULT_NODE })).toEqual([])
+  expect(undef(code, { defaults: DEFAULT_NODE })).toEqual([])
 
   code = `import * as Warning from '../lib/warning'; var warn = new Warning('text');`
-  expect(findUndefinedVarible(code, { defaults: DEFAULT_NODE })).toEqual([])
+  expect(undef(code, { defaults: DEFAULT_NODE })).toEqual([])
 
   code = `var React, App, a=1; React.render(<App attr={a} />);`
-  expect(findUndefinedVarible(code, { plugins: ['jsx'] })).toEqual([])
+  expect(undef(code, { plugins: ['jsx'] })).toEqual([])
 
   code = `class A { constructor() { new.target; } }`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `var Foo; class Bar extends Foo { constructor() { super();  }}`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 })
 
 test('函数内调用', () => {
   // pass
   code = `var console; [1,2,3].forEach(obj => {\n  console.log(obj);\n});`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   code = `function myFunc(...foo) {  return foo1;}`
-  expect(findUndefinedVarible(code)).toEqual(['foo1'])
+  expect(undef(code)).toEqual(['foo1'])
 
   code = `function foo() { var [a, b=4] = [1, 2]; return {a, b}; }`
-  expect(findUndefinedVarible(code)).toEqual([])
+  expect(undef(code)).toEqual([])
 
   // no-pass 
   code = `var console; [1,2,3].forEach(obj => { consolex.log(obj1); })`
-  expect(findUndefinedVarible(code)).toEqual(['consolex', 'obj1'])
+  expect(undef(code)).toEqual(['consolex', 'obj1'])
   code = `const fun = function () { const f = 'xx'; k; f; }`
-  expect(findUndefinedVarible(code)).toEqual(['k'])
+  expect(undef(code)).toEqual(['k'])
   code = 'function f() { b; }'
-  expect(findUndefinedVarible(code)).toEqual(['b'])
+  expect(undef(code)).toEqual(['b'])
 })
 
 test('函数嵌套内调用', () => {
@@ -168,7 +168,7 @@ test('函数嵌套内调用', () => {
       }
     }
   `
-  expect(findUndefinedVarible(code)).toEqual([
+  expect(undef(code)).toEqual([
     'k',
     'b',
     'y',

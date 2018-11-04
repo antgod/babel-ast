@@ -105,7 +105,7 @@ const accumuleEnvs = (envs) => {
   })
 }
 
-function findUndefinedVarible (code, {
+function undef (code, {
   defaults = DEFAULT_BROWER,
   sourceType = DEFAULT_SOURCE_TYPE,
   plugins = DEFAULT_PLUGINS,
@@ -185,83 +185,23 @@ function findUndefinedVarible (code, {
   return undefinedVars
 }
 
-// const code = `function foo() {var {c:e} = {a: 1}; var [a, b=4] = [1, 2]; return {a, b, c: d}; }`
-// const code = `var {c:e} = {a: b}; `
-// const code = 'var a = b'
-
-// const code = 'function myFunc(...foo) {  return foo;}'
-// const code = `var console; [1,2,3].forEach(obj => { 
-//   consolex.log(obj1);
-// });`
-const code = `/**
-* 金蝉无缝集成ds(v2.0)为了使用配合的图表能力,可以使用array2Ds来转换ds的数据格式
-* DS会包含很多其它信息,所以这里可以通过 metadata 定义数据元数据信息格式为:
-* {
-*   colName:{
-*    cnName: '',
-*    isSortable: false,
-*    isVisible: true,
-*    format: function or format partten string
-*   }
-* }
-*/
-function main({util}, array, metadata) {
- if (isEmpty(array)) {
-   return array
- }
- const meta = {}
- Object.keys(metadata || {}).forEach(key => {
-   const cfg = metadata[key]
-   if (typeof cfg.format === 'string') {
-     if (/[ymdhs]/i.test(cfg.format)) {
-       cfg.fmt = function(value) {
-         return fmtDate(value, cfg.format)
-       }
-     } else {
-       cfg.fmt = function(value) {
-         return fmtNum(value, cfg.format)
-       }
-     }
-   }
-   meta[key] = cfg
- })
- const header = []
- Object.keys(array[0]).forEach(key => {
-   header.push(Object.assign({
-     name: key,
-     isVisible: true,
-   }, meta[key]))
- })
- const dataList = []
- array.forEach(row => {
-   const rowData = []
-   header.forEach(h => {
-     const col = {
-       value: row[h.name],
-       showValue: row[h.name],
-     }
-     if (meta[h.name] && meta[h.name].fmt) {
-       col.showValue = meta[h.name].fmt(col.value)
-     }
-     rowData.push(col)
-   })
-   dataList.push({ rowData })
- })
- return {
-   header,
-   dataList,
- }
-}
-
-function defFmt(value) {
- return value
-}
-`
-console.log(findUndefinedVarible(code))
-
 module.exports = {
-  findUndefinedVarible,
+  undef,
   DEFAULT_BROWER,
   DEFAULT_NODE,
 }
 
+const code1 = `function foo() {var {c:e} = {a: 1}; var [a, b=4] = [1, 2]; return {a, b, c: d}; }`
+const code2 = `var {c:e} = {a: b}; `
+const code3 = 'var a = b'
+
+const code4 = 'function myFunc(...foo) {  return foo;}'
+const code5 = `var console; [1,2,3].forEach(obj => { 
+  consolex.log(obj1);
+});`
+
+console.log(undef(code1, {}))
+console.log(undef(code2, {}))
+console.log(undef(code3, {}))
+console.log(undef(code4, {}))
+console.log(undef(code5, {}))
