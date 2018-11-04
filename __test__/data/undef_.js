@@ -1,5 +1,5 @@
-const { undef } = require('../src/undef')
-const { code } = require('./data/data')
+const { undef } = require('../../src/undef')
+const { code } = require('./data')
 
 // 匿名函数
 const code1 = `

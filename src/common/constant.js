@@ -36,6 +36,8 @@ const DEFAULT_BROWER = ['window', 'alert', 'document', 'Math', 'location', 'hist
 ]
 
 const DEFAULT_NODE = ['require', 'module', 'exports']
+const DEFAULT_PLUGINS = ['objectRestSpread']
+const DEFAULT_SOURCE_TYPE = 'module'
 
 module.exports = {
   NODE_TYPES,
@@ -44,4 +46,6 @@ module.exports = {
   DEFAULT_BROWER,
   DEFAULT_NODE,
   SPEC_TYPES,
+  DEFAULT_PLUGINS,
+  DEFAULT_SOURCE_TYPE,
 }

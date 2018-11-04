@@ -1,10 +1,7 @@
 const babel = require('@babel/parser')
 const traverse = require('@babel/traverse').default
 const { values, omit, pick, filter, keys } = require('ant-util') 
-const { NODE_TYPES, DEFAULT_BROWER, DEFAULT_NODE, SPEC_TYPES, KIND_TYPES } = require('./common/constant')
-
-const DEFAULT_PLUGINS = ['objectRestSpread']
-const DEFAULT_SOURCE_TYPE = 'module'
+const { NODE_TYPES, DEFAULT_BROWER, DEFAULT_NODE, SPEC_TYPES, KIND_TYPES, DEFAULT_PLUGINS, DEFAULT_SOURCE_TYPE } = require('../common/constant')
 
 const analysisBindVars = (scope, path, start) => {
   if (!scope) {

@@ -40,5 +40,6 @@
     "start": "node src/undef.js",
     "test": "jest __test__ --coverage"
   },
+  "main": "./lib/index",
   "pre-commit": []
 }

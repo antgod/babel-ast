@@ -1,64 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1541298631593" clover="3.2.0">
-  <project timestamp="1541298631593" name="All files">
-    <metrics statements="47" coveredstatements="47" conditionals="28" coveredconditionals="28" methods="4" coveredmethods="4" elements="79" coveredelements="79" complexity="0" loc="47" ncloc="47" packages="2" files="2" classes="2">
-      <package name="src">
-        <metrics statements="39" coveredstatements="39" conditionals="28" coveredconditionals="28" methods="4" coveredmethods="4"/>
-        <file name="undef1.js" path="/Users/lihongji/study/babel-ast/src/undef1.js">
-          <metrics statements="39" coveredstatements="39" conditionals="28" coveredconditionals="28" methods="4" coveredmethods="4"/>
+<coverage generated="1541325471398" clover="3.2.0">
+  <project timestamp="1541325471398" name="All files">
+    <metrics statements="80" coveredstatements="79" conditionals="43" coveredconditionals="42" methods="10" coveredmethods="10" elements="133" coveredelements="131" complexity="0" loc="80" ncloc="80" packages="3" files="3" classes="3">
+      <package name="common">
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <file name="constant.js" path="/Users/lihongji/study/babel-ast/src/common/constant.js">
+          <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+          <line num="1" count="2" type="stmt"/>
+          <line num="21" count="2" type="stmt"/>
+          <line num="23" count="2" type="stmt"/>
+          <line num="25" count="2" type="stmt"/>
+          <line num="31" count="2" type="stmt"/>
+          <line num="38" count="2" type="stmt"/>
+          <line num="39" count="2" type="stmt"/>
+          <line num="40" count="2" type="stmt"/>
+          <line num="42" count="2" type="stmt"/>
+        </file>
+      </package>
+      <package name="projectMods">
+        <metrics statements="40" coveredstatements="39" conditionals="15" coveredconditionals="14" methods="6" coveredmethods="6"/>
+        <file name="index.js" path="/Users/lihongji/study/babel-ast/src/projectMods/index.js">
+          <metrics statements="40" coveredstatements="39" conditionals="15" coveredconditionals="14" methods="6" coveredmethods="6"/>
+          <line num="1" count="1" type="stmt"/>
+          <line num="2" count="1" type="stmt"/>
+          <line num="3" count="1" type="stmt"/>
+          <line num="4" count="1" type="stmt"/>
+          <line num="5" count="1" type="stmt"/>
+          <line num="6" count="1" type="stmt"/>
+          <line num="8" count="1" type="stmt"/>
+          <line num="9" count="1" type="stmt"/>
+          <line num="10" count="1" type="stmt"/>
+          <line num="11" count="1" type="stmt"/>
+          <line num="13" count="1" type="cond" truecount="1" falsecount="0"/>
+          <line num="14" count="1" type="cond" truecount="1" falsecount="1"/>
+          <line num="15" count="0" type="stmt"/>
+          <line num="17" count="1" type="stmt"/>
+          <line num="18" count="1" type="stmt"/>
+          <line num="19" count="1" type="stmt"/>
+          <line num="22" count="1" type="stmt"/>
+          <line num="23" count="10" type="stmt"/>
+          <line num="26" count="1" type="stmt"/>
+          <line num="27" count="8" type="stmt"/>
+          <line num="28" count="8" type="stmt"/>
+          <line num="29" count="8" type="stmt"/>
+          <line num="31" count="1" type="stmt"/>
+          <line num="33" count="8" type="stmt"/>
+          <line num="34" count="8" type="stmt"/>
+          <line num="35" count="10" type="cond" truecount="2" falsecount="0"/>
+          <line num="46" count="1" type="cond" truecount="1" falsecount="0"/>
+          <line num="47" count="1" type="stmt"/>
+          <line num="48" count="1" type="stmt"/>
+          <line num="49" count="1" type="stmt"/>
+          <line num="53" count="8" type="stmt"/>
+          <line num="56" count="8" type="stmt"/>
+          <line num="57" count="8" type="stmt"/>
+          <line num="59" count="11" type="stmt"/>
+          <line num="60" count="11" type="cond" truecount="2" falsecount="0"/>
+          <line num="61" count="7" type="stmt"/>
+          <line num="64" count="11" type="cond" truecount="4" falsecount="0"/>
+          <line num="65" count="3" type="stmt"/>
+          <line num="69" count="8" type="stmt"/>
+          <line num="72" count="1" type="stmt"/>
+        </file>
+      </package>
+      <package name="undef">
+        <metrics statements="31" coveredstatements="31" conditionals="28" coveredconditionals="28" methods="4" coveredmethods="4"/>
+        <file name="index.js" path="/Users/lihongji/study/babel-ast/src/undef/index.js">
+          <metrics statements="31" coveredstatements="31" conditionals="28" coveredconditionals="28" methods="4" coveredmethods="4"/>
           <line num="1" count="1" type="stmt"/>
           <line num="2" count="1" type="stmt"/>
           <line num="3" count="1" type="stmt"/>
           <line num="4" count="1" type="stmt"/>
           <line num="6" count="1" type="stmt"/>
-          <line num="7" count="1" type="stmt"/>
-          <line num="9" count="1" type="stmt"/>
-          <line num="10" count="117" type="cond" truecount="2" falsecount="0"/>
-          <line num="11" count="42" type="stmt"/>
-          <line num="13" count="75" type="stmt"/>
-          <line num="14" count="133" type="cond" truecount="3" falsecount="0"/>
-          <line num="17" count="75" type="stmt"/>
-          <line num="20" count="1" type="stmt"/>
-          <line num="21" count="154" type="cond" truecount="2" falsecount="0"/>
-          <line num="22" count="75" type="cond" truecount="2" falsecount="0"/>
-          <line num="29" count="17" type="stmt"/>
-          <line num="32" count="137" type="stmt"/>
-          <line num="40" count="44" type="stmt"/>
-          <line num="44" count="44" type="stmt"/>
-          <line num="45" count="44" type="stmt"/>
+          <line num="7" count="117" type="cond" truecount="2" falsecount="0"/>
+          <line num="8" count="42" type="stmt"/>
+          <line num="10" count="75" type="stmt"/>
+          <line num="11" count="133" type="cond" truecount="3" falsecount="0"/>
+          <line num="14" count="75" type="stmt"/>
+          <line num="17" count="1" type="stmt"/>
+          <line num="18" count="154" type="cond" truecount="2" falsecount="0"/>
+          <line num="19" count="75" type="cond" truecount="2" falsecount="0"/>
+          <line num="26" count="17" type="stmt"/>
+          <line num="29" count="137" type="stmt"/>
+          <line num="37" count="44" type="stmt"/>
+          <line num="41" count="44" type="stmt"/>
+          <line num="42" count="44" type="stmt"/>
+          <line num="44" count="154" type="stmt"/>
+          <line num="45" count="154" type="stmt"/>
+          <line num="46" count="154" type="stmt"/>
           <line num="47" count="154" type="stmt"/>
           <line num="48" count="154" type="stmt"/>
-          <line num="49" count="154" type="stmt"/>
           <line num="50" count="154" type="stmt"/>
-          <line num="51" count="154" type="stmt"/>
-          <line num="53" count="154" type="stmt"/>
-          <line num="54" count="154" type="cond" truecount="4" falsecount="0"/>
-          <line num="55" count="58" type="cond" truecount="2" falsecount="0"/>
-          <line num="56" count="42" type="stmt"/>
-          <line num="57" count="42" type="cond" truecount="2" falsecount="0"/>
-          <line num="58" count="20" type="stmt"/>
-          <line num="64" count="44" type="stmt"/>
-          <line num="67" count="1" type="stmt"/>
-          <line num="74" count="1" type="stmt"/>
-          <line num="102" count="1" type="stmt"/>
-          <line num="103" count="1" type="stmt"/>
-          <line num="104" count="1" type="stmt"/>
-          <line num="106" count="1" type="stmt"/>
-          <line num="107" count="1" type="stmt"/>
-        </file>
-      </package>
-      <package name="src.common">
-        <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-        <file name="constant.js" path="/Users/lihongji/study/babel-ast/src/common/constant.js">
-          <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-          <line num="1" count="1" type="stmt"/>
-          <line num="20" count="1" type="stmt"/>
-          <line num="27" count="1" type="stmt"/>
-          <line num="29" count="1" type="stmt"/>
-          <line num="31" count="1" type="stmt"/>
-          <line num="37" count="1" type="stmt"/>
-          <line num="44" count="1" type="stmt"/>
-          <line num="46" count="1" type="stmt"/>
+          <line num="51" count="154" type="cond" truecount="4" falsecount="0"/>
+          <line num="52" count="58" type="cond" truecount="2" falsecount="0"/>
+          <line num="53" count="42" type="stmt"/>
+          <line num="54" count="42" type="cond" truecount="2" falsecount="0"/>
+          <line num="55" count="20" type="stmt"/>
+          <line num="61" count="44" type="stmt"/>
+          <line num="64" count="1" type="stmt"/>
         </file>
       </package>
     </metrics>
